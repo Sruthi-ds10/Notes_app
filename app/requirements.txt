@@ -1,0 +1,16 @@
+flask
+flask_sqlalchemy
+flask_migrate
+flask-login
+python-dotenv
+pandas
+openpyxl
+openai
+groq
+fpdf
+werkzeug
+httpx
+tqdm
+requests
+reportlab
+python-docx
