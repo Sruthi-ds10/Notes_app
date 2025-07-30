@@ -83,3 +83,4 @@ downloads/
 *.tar.gz
 *.rar
 *.7z
+.env 
