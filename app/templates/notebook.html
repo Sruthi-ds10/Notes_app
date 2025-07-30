@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm">
+    <h4 class="mb-4">📝 Your Notebook</h4>
+
+    {% if notebook %}
+        {% for note in notebook %}
+            <div class="mb-4 p-3 border rounded bg-light">
+                {% if note_type %}
+                    <div class="mb-2 text-muted small"><strong>Type:</strong> {{ note.note_type|title }}</div>
+                {% endif %}
+                <div style="white-space: pre-wrap;">{{ note.content or '[Empty Note]' }}</div>
+            </div>
+        {% endfor %}
+        <div class="mt-3 d-flex gap-3">
+            <a href="{{ url_for('download', filetype='txt') }}" class="btn btn-outline-secondary">📄 Download as TXT</a>
+            <a href="{{ url_for('download', filetype='pdf') }}" class="btn btn-outline-secondary">📄 Download as PDF</a>
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            No notes saved yet. Generate and save a response to see it here.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

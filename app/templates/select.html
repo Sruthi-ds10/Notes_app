@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    .heading-icon {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .heading-icon img.ai-icon {
+        width: 150px;
+        height: auto;
+        object-fit: contain;
+    }
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card p-4 shadow-sm">
+            <div class="heading-icon">
+                <h3 class="mb-4">📌 Select Topic, Subtopic & Prompt</h3>
+                <img src="{{ url_for('static', filename='images/ai_icon.png') }}" alt="AI Icon" class="ai-icon">
+            </div>
+
+            <form id="generateForm" action="{{ url_for('generate') }}" method="POST">
+                <!-- Topic -->
+                <div class="mb-3">
+                    <label for="topic" class="form-label">Select Topic:</label>
+                    <select name="topic_id" id="topic" class="form-select" required>
+                        <option value="">-- Select a Topic --</option>
+                        {% for topic in topics %}
+                            <option value="{{ topic.id }}">{{ topic.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Subtopic -->
+                <div class="mb-3">
+                    <label for="subtopic" class="form-label">Select Subtopic:</label>
+                    <select name="subtopic_id" id="subtopic" class="form-select" required>
+                        <option value="">-- Select a Subtopic --</option>
+                    </select>
+                </div>
+
+                <!-- Predefined Prompt Type -->
+                <div class="mb-3">
+                    <label for="prompt_type" class="form-label">Select Answer Type:</label>
+                    <select name="prompt_type" id="prompt_type" class="form-select">
+                        <option value="">-- Select a predefined type --</option>
+                        {% for p in prompt_types %}
+                            <option value="{{ p }}">{{ p }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Prompt Name (Optional) -->
+                <div class="mb-3">
+                    <label for="prompt_name" class="form-label">Prompt Name (Optional):</label>
+                    <input type="text" name="prompt_name" id="prompt_name" class="form-control" placeholder="e.g., PPT Prompt, Summary Generator">
+                </div>
+
+                <!-- OR Custom Prompt -->
+                <div class="mb-3">
+                    <label for="custom_prompt" class="form-label">OR Enter Custom Prompt:</label>
+                    <textarea name="custom_prompt" id="custom_prompt" class="form-control" rows="3" placeholder="Example: Create a PPT for this subtopic"></textarea>
+                </div>
+
+                <!-- Saved Custom Prompts -->
+                {% if custom_prompts %}
+                <div class="mb-3">
+                    <label class="form-label">Your Saved Prompts:</label>
+                    <select class="form-select" onchange="fillSavedPrompt(this)">
+                        <option value="">-- Select to auto-fill --</option>
+                        {% for cp in custom_prompts %}
+                            <option value="{{ cp.prompt_text }}" data-name="{{ cp.prompt_name }}">{{ cp.prompt_name or 'Unnamed Prompt' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <!-- LLM Provider & API Key -->
+                <div class="mb-3">
+                    <label for="llm_provider" class="form-label">LLM Provider:</label>
+                    <select name="llm_provider" id="llm_provider" class="form-select">
+                        <option value="openai">OpenAI</option>
+                        <option value="groq">Groq</option>
+                    </select>
+                    <small class="text-muted">Only OpenAI and Groq are supported.</small>
+                </div>
+                <div class="mb-3">
+                    <label for="llm_api_key" class="form-label">API Key (Optional):</label>
+                    <input type="text" name="llm_api_key" id="llm_api_key" class="form-control" placeholder="Enter your LLM API key">
+                </div>
+
+                <!-- Submit -->
+                <div class="d-grid">
+                    <button class="btn btn-primary">🚀 Generate Response</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Excel Upload -->
+        <div class="card p-4 shadow-sm mt-4">
+            <h5>📥 Upload Topics & Subtopics (Excel)</h5>
+            <form action="{{ url_for('upload_excel') }}" method="POST" enctype="multipart/form-data">
+                <input type="file" name="excel_file" class="form-control mb-2" accept=".xlsx" required>
+                <button class="btn btn-outline-dark">Upload Excel</button>
+            </form>
+            <p class="text-muted mt-2">Excel must have columns: <strong>Topic</strong> and <strong>Subtopic</strong>.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fetch subtopics dynamically when topic changes
+    document.getElementById('topic').addEventListener('change', function() {
+        const topicId = this.value;
+        const subtopicSelect = document.getElementById('subtopic');
+        subtopicSelect.innerHTML = '<option value="">Loading...</option>';
+        
+        if (topicId) {
+            fetch(`/api/subtopics/${topicId}`)
+                .then(response => response.json())
+                .then(data => {
+                    subtopicSelect.innerHTML = '<option value="">-- Select a Subtopic --</option>';
+                    data.subtopics.forEach(sub => {
+                        const option = document.createElement('option');
+                        option.value = sub.id;
+                        option.textContent = sub.name;
+                        subtopicSelect.appendChild(option);
+                    });
+                })
+                .catch(err => {
+                    subtopicSelect.innerHTML = '<option value="">Error loading subtopics</option>';
+                });
+        } else {
+            subtopicSelect.innerHTML = '<option value="">-- Select a Subtopic --</option>';
+        }
+    });
+
+    // Validate prompt selection
+    document.getElementById('generateForm').addEventListener('submit', function(e) {
+        const promptType = document.getElementById('prompt_type').value.trim();
+        const customPrompt = document.getElementById('custom_prompt').value.trim();
+        if (!promptType && !customPrompt) {
+            e.preventDefault();
+            alert('Please select an Answer Type or enter a Custom Prompt.');
+        }
+    });
+
+    // Fill saved prompt name and text
+    function fillSavedPrompt(selectEl) {
+        const selected = selectEl.options[selectEl.selectedIndex];
+        const text = selected.value;
+        const name = selected.getAttribute('data-name') || '';
+        document.getElementById('custom_prompt').value = text;
+        document.getElementById('prompt_name').value = name;
+    }
+</script>
+{% endblock %}

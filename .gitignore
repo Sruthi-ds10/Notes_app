@@ -1,0 +1,85 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# --- Virtual Environments ---
+env/
+venv/
+ENV/
+.venv/
+.ENV/
+env.bak/
+venv.bak/
+
+# --- Flask ---
+instance/
+*.db
+*.sqlite3
+
+# --- Logs & Temp ---
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+
+# --- Flask/Python Outputs ---
+*.coverage
+coverage.xml
+.pytest_cache/
+.tox/
+.nox/
+.cache/
+
+# --- Editor Folders ---
+.vscode/
+.idea/
+
+# --- Windows Specific ---
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- OS generated files ---
+*.orig
+
+# --- Node (if used) ---
+node_modules/
+
+# --- Compiled, Dist, Packaging ---
+build/
+dist/
+downloads/
+*.egg-info/
+.eggs/
+*.egg
+*.whl
+*.manifest
+
+# --- User Uploaded Files & Artifacts ---
+*.pdf
+*.txt
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.ico
+
+# --- Git Backup & Merge Files ---
+*.orig
+*.rej
+*.patch
+
+# --- Archives ---
+*.zip
+*.tar.gz
+*.rar
+*.7z

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Notes App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('/static/images/bg_clean.jpg') no-repeat center center fixed;
+            background-size: cover;
+            background-color: #e6f4fa; /* very light blue fallback */
+        }
+
+        header {
+            background-color: #87CEEB; /* sky blue */
+            padding: 2rem 0;
+            text-align: center;
+            color: white;
+        }
+
+        nav.navbar {
+            background: #f8fbfd; /* soft light blue-white */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-content img {
+            max-height: 80px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: white;
+        }
+
+        p.lead {
+            font-size: 1.2rem;
+            color: #eef6fa;
+        }
+
+        .navbar-brand,
+        .nav-link {
+            font-size: 1.1rem;
+            color: #0077b6 !important;
+        }
+
+        .navbar-brand:hover,
+        .nav-link:hover {
+            color: #005f8a !important;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <div class="container header-content">
+        <img src="{{ url_for('static', filename='images/ai_decors.png') }}" alt="AI Decor Clean">
+        <div>
+            <h1 class="fw-bold m-0">Learn. Grow. Generate AI-powered Notes.</h1>
+            <p class="lead m-0">Your personal AI assistant for academic learning and smart note generation.</p>
+        </div>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-light px-4">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="{{ url_for('select') }}">AI Notes App</a>
+        <div class="d-flex align-items-center gap-4">
+            <a class="nav-link" href="{{ url_for('select') }}">Generate Notes</a>
+            <a class="nav-link" href="{{ url_for('notebook') }}">My Notebook</a>
+            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Container -->
+<div class="container my-4">
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Page Content -->
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Bootstrap 5 JS for dismissible alerts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

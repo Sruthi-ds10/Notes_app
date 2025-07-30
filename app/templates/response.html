@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <!-- Left Panel: Response Section -->
+    <div class="col-lg-8 mb-3">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h4 class="mb-3" style="font-size: 1.6rem;">🤖 Generated Response</h4>
+                <p class="mb-1"><strong>Topic:</strong> {{ topic }}</p>
+                <p class="mb-1"><strong>Subtopic:</strong> {{ subtopic }}</p>
+                <p class="mb-3"><strong>Answer Type:</strong> {{ answer_type }}</p>
+
+                <!-- AI Response Display -->
+                <div class="bg-light p-3 mb-4 rounded shadow-sm border" style="white-space: pre-wrap; min-height: 150px;">
+                    {{ response }}
+                </div>
+
+                <!-- Save to Notebook -->
+                <form method="POST" action="{{ url_for('save') }}">
+                    <input type="hidden" name="note" value="{{ response }}">
+                    <button class="btn btn-success mb-3">
+                        <img src="{{ url_for('static', filename='images/note_icon.png') }}" alt="Save" style="height: 18px; margin-right: 6px;">
+                        Save to Notebook
+                    </button>
+                </form>
+
+                <!-- Custom Prompt Regeneration -->
+                <div class="mb-2 d-flex align-items-center">
+                    <img src="{{ url_for('static', filename='images/prompt_icon.png') }}" alt="Prompt" style="height: 20px; margin-right: 10px;">
+                    <strong>Modify Prompt & Regenerate</strong>
+                </div>
+                <form action="{{ url_for('regenerate_custom') }}" method="POST">
+                    <textarea class="form-control mb-2" rows="4" name="custom_prompt"
+                        placeholder="Type your custom prompt here...">{{ editable_prompt or session.get('last_prompt', '') }}</textarea>
+                    <button class="btn btn-outline-primary w-100">🔁 Regenerate</button>
+                </form>
+
+                <!-- Navigation for Response History -->
+                <div class="mt-4 d-flex justify-content-between">
+                    {% if has_previous %}
+                        <a href="{{ url_for('previous_response') }}" class="btn btn-outline-secondary">⬅️ Previous</a>
+                    {% else %}
+                        <span></span>
+                    {% endif %}
+                    {% if session['responses']|length > 1 and session['response_index'] < session['responses']|length - 1 %}
+                        <a href="{{ url_for('next_response') }}" class="btn btn-outline-secondary">Next ➡️</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel: Word Explanation -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm p-4">
+            <h5 class="mb-3">🔍 Word Explanation</h5>
+            <form action="{{ url_for('word_explanation') }}" method="POST">
+                <input type="text" name="word" class="form-control mb-2" placeholder="Enter a word to explain" required>
+                <button class="btn btn-outline-dark w-100">Explain</button>
+            </form>
+
+            {% if answer_type == "Word Explanation" %}
+                <div class="alert alert-info mt-3">
+                    <strong>Explanation:</strong>
+                    <p style="white-space: pre-wrap;">{{ response }}</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Background-Aligned AI Image -->
+        <div class="text-center mt-3">
+            <img src="{{ url_for('static', filename='images/ai_bg.png') }}"
+                 alt="AI Assistant"
+                 class="img-fluid"
+                 style="max-height: 5000px; margin-top: 350px;">
+        </div>
+    </div>
+</div>
+{% endblock %}

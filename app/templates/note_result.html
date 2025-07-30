@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm">
+    <h4>Note Result</h4>
+    {% if result %}
+        <div class="bg-light border p-3" style="white-space: pre-wrap;">{{ result }}</div>
+    {% else %}
+        <p class="text-muted">No result available to show.</p>
+    {% endif %}
+</div>
+{% endblock %}

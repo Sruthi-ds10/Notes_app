@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card p-4 shadow-sm">
+    {% if word and explanation %}
+        <h4 class="mb-3">Meaning of "<span class="text-primary">{{ word | title }}</span>"</h4>
+        <div class="bg-light p-3 mb-4 rounded" style="white-space: pre-wrap;">
+            {{ explanation }}
+        </div>
+        <a href="{{ url_for('return_to_response') }}" class="btn btn-outline-secondary">⬅️ Back to Last Response</a>
+    {% else %}
+        <p class="text-danger">⚠️ No word explanation available.</p>
+        <a href="{{ url_for('select') }}" class="btn btn-outline-primary">⬅️ Go to Generate</a>
+    {% endif %}
+</div>
+{% endblock %}
